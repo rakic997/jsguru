@@ -13,7 +13,7 @@ interface PostProps {
 }
 
 const Post = ({ post }: PostProps) => {
-  const { users, comments } = useContext(PostsContext) || { users: [], comments: [] };
+  const { users, comments, searchQuery } = useContext(PostsContext) || { users: [], comments: [], searchQuery: '' };
   const [expandedPost, setExpandedPost] = useState(false);
   const [expandedComments, setExpandedComments] = useState(false);
 
@@ -37,13 +37,19 @@ const Post = ({ post }: PostProps) => {
   const user = findUser(post.userId);
   const postComments = findComment(post.id);
 
+  const isMatch = user?.name.toLowerCase().includes(searchQuery.toLowerCase());
+
+  if (!isMatch) {
+    return null; 
+  }
+
   return (
     <div className='post' onClick={togglePostDetails}>
       <h4>{post.title}</h4>
+      <h6>{user?.name}</h6>
       {expandedPost &&
         <div>
           <p>{post.body}</p>
-          <h6>{user?.name}</h6>
           <button onClick={toggleComments}>Expand Comments</button>
           {expandedComments &&
             <ul>

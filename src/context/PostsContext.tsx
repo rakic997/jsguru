@@ -6,6 +6,8 @@ interface PostsContextType {
     posts: Post[];
     comments: Comment[];
     users: User[];
+    searchQuery: string;
+    setSearchQuery: React.Dispatch<React.SetStateAction<string>>;
 }
 
 const PostsContext = createContext<PostsContextType | undefined>(undefined);
@@ -14,6 +16,7 @@ const PostsContextProvider = ({ children }: { children: React.ReactNode }) => {
     const [posts, setPosts] = useState<Post[]>([]);
     const [comments, setComments] = useState<Comment[]>([]);
     const [users, setUsers] = useState<User[]>([]);
+    const [searchQuery, setSearchQuery] = useState('');
 
     useEffect(() => {
         const fetchData = async () => {
@@ -40,7 +43,9 @@ const PostsContextProvider = ({ children }: { children: React.ReactNode }) => {
     const ContextValue: PostsContextType = {
         posts,
         comments,
-        users
+        users,
+         searchQuery,
+        setSearchQuery,
     }
 
     return (
