@@ -18,9 +18,9 @@ const PostsContextProvider = ({ children }: { children: React.ReactNode }) => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const postsResponse = await fetch('https://jsonplaceholder.typicode.com/posts');
-                const commentsResponse = await fetch('https://jsonplaceholder.typicode.com/comments');
-                const usersResponse = await fetch('https://jsonplaceholder.typicode.com/users');
+                const postsResponse = await fetch('https://jsonplaceholder.typicode.com/posts?_limit=15');
+                const commentsResponse = await fetch('https://jsonplaceholder.typicode.com/comments?_limit=10');
+                const usersResponse = await fetch('https://jsonplaceholder.typicode.com/users?_limit=20');
 
                 const postsData = await postsResponse.json();
                 const commentsData = await commentsResponse.json();
@@ -38,7 +38,7 @@ const PostsContextProvider = ({ children }: { children: React.ReactNode }) => {
     }, []);
 
     const ContextValue: PostsContextType = {
-        posts, 
+        posts,
         comments,
         users
     }
