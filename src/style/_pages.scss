@@ -1,7 +1,16 @@
+
+
+// General layout
 .container {
     max-width: 1300px;
     margin: auto;
+
+    @media (max-width: 1350px) {
+        padding: 0 40px;
+    }
 }
+
+// Posts page
 .posts-container {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -15,8 +24,28 @@
         padding: 0 40px;
         grid-template-columns: repeat(2, 1fr);
     }
-    // @media (min-width: 1200px) and (max-width: 1500px) {
-
-    // }
 }
 
+// Photo page
+.photos-container {
+    position: relative;
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 30px;
+    min-height: 150px;
+
+    @include mobile {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    @include tablet {
+        grid-template-columns: repeat(3, 1fr);
+    }
+    @media (min-width: 1200px) and (max-width: 1350px) {
+        grid-template-columns: repeat(4, 1fr);
+    }
+
+    img {
+        width: 100%;
+    }
+}

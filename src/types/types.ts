@@ -1,11 +1,11 @@
-export interface Post {
+export interface PostType {
     userId: number;
     id: number;
     title: string;
     body: string;
   }
   
-  export interface Comment {
+  export interface CommentType {
     postId: number;
     id: number;
     name: string;
@@ -13,7 +13,7 @@ export interface Post {
     body: string;
   }
   
-  export interface User {
+  export interface UserType {
     id: number;
     name: string;
     username: string;
@@ -36,3 +36,10 @@ export interface Post {
       bs: string;
     };
   }
+
+  export interface PhotoType {
+    id: number;
+    thumbnailUrl: string;
+    title: string;
+  }
+  

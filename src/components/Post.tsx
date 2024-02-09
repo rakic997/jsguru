@@ -3,19 +3,14 @@ import { PostsContext } from '../context/PostsContext';
 
 import Comments from './Comments';
 
-interface PostType {
-  userId: number;
-  id: number;
-  title: string;
-  body: string;
-}
+import { PostType } from '../types/types';
 
 interface PostProps {
   post: PostType;
 }
 
 const Post = ({ post }: PostProps) => {
-  const { posts, users, comments, searchQuery } = useContext(PostsContext) || { users: [], comments: [], searchQuery: '' };
+  const { users, comments, searchQuery } = useContext(PostsContext) || { users: [], comments: [], searchQuery: '' };
   const [expandedPost, setExpandedPost] = useState(false);
   const [expandedComments, setExpandedComments] = useState(false);
 
@@ -27,6 +22,11 @@ const Post = ({ post }: PostProps) => {
     return comments.filter(comment => comment.postId === postId);
   }
 
+  const user = findUser(post.userId);
+  const postComments = findComment(post.id);
+
+  const isMatch = user?.name.toLowerCase().includes(searchQuery.toLowerCase());
+
   const togglePostDetails = () => {
     setExpandedPost(!expandedPost);
   }
@@ -36,17 +36,9 @@ const Post = ({ post }: PostProps) => {
     setExpandedComments(!expandedComments);
   }
 
-  const user = findUser(post.userId);
-  const postComments = findComment(post.id);
-
-  const isMatch = user?.name.toLowerCase().includes(searchQuery.toLowerCase());
-
   if (!isMatch) {
     return null;
   }
-
-  console.log(posts, 'posts')
-  console.log(comments, 'comments')
 
   return (
     <div className='post' onClick={togglePostDetails}>
@@ -72,10 +64,10 @@ const Post = ({ post }: PostProps) => {
           <span className='comments-number'>({postComments.length})</span>
         </h6>
       </div>
+      {expandedComments && <Comments comments={postComments} key={post.id} />}
       {expandedPost &&
         <>
           <p className='post-body'>{post.body}</p>
-          {expandedComments && <Comments comments={postComments} />}
         </>
       }
     </div>

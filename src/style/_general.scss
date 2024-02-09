@@ -92,7 +92,7 @@ button,
 	padding: 0;
 }
 :-moz-focusring {
-	outline: 1px dotted ButtonText;
+	outline: 1px dotted button;
 }
 :-moz-ui-invalid {
 	box-shadow: none;
@@ -150,4 +150,11 @@ body {
     display: $display;
     align-items: $align-items;
     justify-content: $justify-content;
+}
+
+// General
+.disabled {
+	opacity: 0.32;
+	pointer-events: none;
+	cursor: not-allowed
 }

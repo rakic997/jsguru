@@ -1,11 +1,11 @@
 import React, { createContext, useState, useEffect } from 'react';
 
-import { Post, Comment, User } from '../types/types';
+import { PostType, CommentType, UserType } from '../types/types';
 
 interface PostsContextType {
-    posts: Post[];
-    comments: Comment[];
-    users: User[];
+    posts: PostType[];
+    comments: CommentType[];
+    users: UserType[];
     searchQuery: string;
     setSearchQuery: React.Dispatch<React.SetStateAction<string>>;
 }
@@ -13,16 +13,16 @@ interface PostsContextType {
 const PostsContext = createContext<PostsContextType | undefined>(undefined);
 
 const PostsContextProvider = ({ children }: { children: React.ReactNode }) => {
-    const [posts, setPosts] = useState<Post[]>([]);
-    const [comments, setComments] = useState<Comment[]>([]);
-    const [users, setUsers] = useState<User[]>([]);
+    const [posts, setPosts] = useState<PostType[]>([]);
+    const [comments, setComments] = useState<CommentType[]>([]);
+    const [users, setUsers] = useState<UserType[]>([]);
     const [searchQuery, setSearchQuery] = useState('');
 
     useEffect(() => {
         const fetchData = async () => {
             try {
                 const postsResponse = await fetch('https://jsonplaceholder.typicode.com/posts?_limit=15');
-                const commentsResponse = await fetch('https://jsonplaceholder.typicode.com/comments?_limit=10');
+                const commentsResponse = await fetch('https://jsonplaceholder.typicode.com/comments?_limit=50');
                 const usersResponse = await fetch('https://jsonplaceholder.typicode.com/users?_limit=20');
 
                 const postsData = await postsResponse.json();
@@ -33,7 +33,7 @@ const PostsContextProvider = ({ children }: { children: React.ReactNode }) => {
                 setComments(commentsData);
                 setUsers(usersData);
             } catch (error) {
-                console.error('Error fetching data:', error);
+                console.error('Error:', error); // Didn't handle it :)
             }
         };
 

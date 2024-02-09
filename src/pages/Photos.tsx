@@ -1,76 +1,92 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, ChangeEvent } from 'react';
 import ReactPaginate from 'react-paginate';
 
-const PHOTOS_API = 'https://jsonplaceholder.typicode.com/photos';
+import { PhotoType } from '../types/types';
 
-interface Photo {
-  albumId: number;
-  id: number;
-  title: string;
-  url: string;
-  thumbnailUrl: string;
-}
+import Loader from '../components/Loader';
 
 const Photos = () => {
-  const [photos, setPhotos] = useState<Photo[]>([]);
+  const [photos, setPhotos] = useState<PhotoType[]>([]);
+  const [totalPhotos, setTotalPhotos] = useState(12);
   const [currentPage, setCurrentPage] = useState(0);
-  const [totalPhotosToShow, setTotalPhotosToShow] = useState(50);
-  const photosPerPage = 10;
+  const [loading, setLoading] = useState(false);
+
+  const perPage = 12;
 
   useEffect(() => {
-    const fetchPhotos = async () => {
-      const startIndex = currentPage * photosPerPage;
-      const photosResponse = await fetch(`${PHOTOS_API}?_start=${startIndex}&_limit=${photosPerPage}`);
-      const photosData = await photosResponse.json();
+    fetchData();
+  }, [totalPhotos]);
 
-      setPhotos(photosData);
-    };
+  useEffect(() => {
+    setCurrentPage(0);
+  }, [totalPhotos]);
 
-    fetchPhotos();
-  }, [currentPage, totalPhotosToShow]);
-
-  const handlePageClick = (selectedPage: { selected: number }) => {
-    setCurrentPage(selectedPage.selected);
+  const fetchData = async () => {
+    setLoading(true);
+    try {
+      const response = await fetch(`https://jsonplaceholder.typicode.com/photos?_limit=${totalPhotos}`);
+      if (!response.ok) {
+        throw new Error('Failed to fetch photos');
+      }
+      const data = await response.json();
+      setPhotos(data);
+    } catch (error) {
+      console.error('Error fetching photos:', error);
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const handleTotalPhotosToShowChange = (e: { target: { value: string; }; }) => {
-    const newTotalPhotosToShow = parseInt(e.target.value);
-    setTotalPhotosToShow(newTotalPhotosToShow);
+  const handlePageChange = ({ selected }: { selected: number }) => {
+    setCurrentPage(selected);
   };
 
-  const pageCount = Math.ceil(totalPhotosToShow / photosPerPage);
+  const handleTotalPhotosChange = (event: ChangeEvent<HTMLInputElement>) => {
+    setTotalPhotos(parseInt(event.target.value, 10));
+  };
+
+  const offset = currentPage * perPage;
+  const pageCount = Math.ceil(photos.length / perPage);
 
   return (
     <div className='photos-page'>
       <div className='container'>
-        <div>
-          <label htmlFor='totalPhotos'>Total Photos to Show:</label>
+        <div className='photos-limit-input'>
+          <label htmlFor='totalPhotos'>Total number of photos:</label>
           <input
             type='number'
             id='totalPhotos'
+            value={totalPhotos}
+            onChange={handleTotalPhotosChange}
             min='1'
-            value={totalPhotosToShow}
-            onChange={handleTotalPhotosToShowChange}
+            max='5000'
           />
         </div>
-        {photos.map((photo) => {
-          return (
-            <img src={photo.thumbnailUrl} key={photo.id} alt={photo.title} />
-          )
-        })}
+        <div className='photos-container'>
+          {loading ? (
+            <Loader />
+          ) : (
+            photos.slice(offset, offset + perPage).map((photo: PhotoType) => (
+              <img src={photo.thumbnailUrl} key={photo.id} alt={photo.title} />
+            ))
+          )}
+        </div>
         <ReactPaginate
-          previousLabel={'Previous'}
-          nextLabel={'Next'}
-          breakLabel={'...'}
+          previousLabel='Prev'
+          nextLabel='Next'
+          breakLabel='...'
           pageCount={pageCount}
           marginPagesDisplayed={2}
-          onPageChange={handlePageClick}
-          containerClassName={'pagination'}
-          activeClassName={'active'}
+          pageRangeDisplayed={5}
+          onPageChange={handlePageChange}
+          containerClassName='pagination'
+          activeClassName='active'
+          previousClassName={currentPage === 0 ? 'disabled' : ''}
+          nextClassName={currentPage === pageCount - 1 ? 'disabled' : ''}
         />
       </div>
     </div>
-  )
+  );
 }
 
 export default Photos;
